@@ -9,8 +9,9 @@ const posts = [
 ];
 
 app.get("/posts", authenticateToken, (req, res) => {
-  req.user;
-  res.json(posts.filter((post) => post.username === req.user.name));
+  // res.json(posts.filter((post) => post.username === req.user.name));
+
+  res.json(posts);
 });
 
 app.post("/login", (req, res) => {
@@ -24,9 +25,14 @@ app.post("/login", (req, res) => {
 function authenticateToken(req, res, next) {
   const authHeader = req.headers["authorization"];
 
-  const token = authHeader && authHeader.split("")[1];
+  // Only use this when you're pre-pending "Bearer" to the auth header.
+  // const token = authHeader && authHeader.split(" ")[1];
+  const token = authHeader;
+  // Validating the token
   if (token === null) return res.sendStatus(401);
+  // Verifying the token
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+    console.log(err);
     if (err) return res.sendStatus(403);
     req.user = user;
     next();
